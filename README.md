@@ -1,5 +1,7 @@
 # Tellah - HTML Photo/Video Album Generator
 
+![Tellah](https://raw.githubusercontent.com/gordonglas/tellah-photo/main/tellah.webp)
+
 Simple tool for creating smaller versions of photos and videos and use them to generate an HTML album, that can be used for self-hosting.
 TellahPhoto has only been tested on Windows, but shouldn't take too much work to get working on other platforms. The generated html albums themselves can be hosted anywhere, on any platform.
 
