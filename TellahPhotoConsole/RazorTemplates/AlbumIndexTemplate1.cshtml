@@ -1,0 +1,141 @@
+﻿@inherits RazorEngineCore.RazorEngineTemplateBase<TellahPhotoLibrary.Models.Html.HtmlAlbumIndex>
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@Model.AlbumIndexTitle</title>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 1.0em;
+            background-color: #303030;
+            margin: 0 0;
+        }
+        .nav {
+            background-color: #375a7f;
+            color: #fff;
+            font-size: 1.4rem;
+            padding: 1.4rem 1.4rem;
+            margin-bottom: 30px;
+        }
+        .page-margins {
+            margin: 0 0;
+            text-align: center;
+        }
+        .footer {
+            margin: 20px auto 0 auto;
+            padding: 1.4rem 1.4rem;
+            background-color: #375a7f;
+            text-align: center;
+            color: #98a3ad;
+            font-size: 0.9rem;
+        }
+        .footer a {
+            color: #98a3ad;
+        }
+        .grid a {
+            color: #98a3ad;
+            text-decoration: none;
+        }
+        .grid-item {
+            display: inline-block;
+            width: 19%;
+            margin: 0 0 14px 0;
+            vertical-align: top;
+            /*transition: all .2s ease-in-out;*/
+        }
+        /*.grid-item:hover {
+            transform: scale(1.15);
+        }*/
+        @@media screen and (max-width: 950px) {
+            .grid-item {
+                width: 23%;
+            }
+        }
+        @@media screen and (max-width: 403px) {
+            .grid-item {
+                width: 49%;
+            }
+        }
+        .grid-item img {
+            height: 100%;
+            border-radius: 8px;
+        }
+        .album-cover {
+            width: 100%;
+            object-fit: cover;
+        }
+        .album-title {
+            padding-top: 10px;
+        }
+    </style>
+
+    <script>
+        function resizeGridItems() {
+            // This is a potentially costly operation.
+            // Need pixel heights instead of percentages,
+            // else images won't line up properly.
+            var heightPercent = 0.15;
+            var minHeight = 50;
+            var width;
+            var gridItems = document.querySelectorAll(".grid-item");
+            for (var i = 0; i < gridItems.length; i++) {
+                var marginBottom = 14;
+                var item = gridItems[i];
+                width = item.clientWidth;
+
+                var height = (Math.round(width * heightPercent) > minHeight ?
+                        width - Math.round(width * heightPercent) : width);
+                item.style.height = height + "px";
+
+                // add height of album-title to margin-bottom
+                var at = item.querySelector(".album-title");
+                item.style.marginBottom = marginBottom + at.clientHeight + "px";
+            }
+        }
+
+        var resizeTimeout;
+        window.addEventListener("resize", function () {
+            clearTimeout(resizeTimeout);
+
+            // mitigate processor intensive stuff by doing it on "final" resize. (debounce pattern)
+            resizeTimeout = setTimeout(function () {
+                resizeGridItems();
+            }, 100);
+        });
+    </script>
+</head>
+<body>
+<div>
+    <div class="nav">
+        <span class="album-index-title">@Model.AlbumIndexTitle</span>
+    </div>
+
+    <div class="page-margins">
+        <div class="grid">
+            @foreach (var album in Model.Albums)
+            {
+                string albumPath = album.AlbumRelativePath == "" ? "" : album.AlbumRelativePath + "/";
+
+                <a href="@(albumPath + album.GetAlbumHtmlFileName())">
+                    <div class="grid-item">
+                        <img class="album-cover" src="@(albumPath + album.AlbumCoverPreviewFileName)" />
+                        <div class="album-title">@album.AlbumName</div>
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+
+    <div class="footer">
+        <span>Made with ❤️ in <a href="https://github.com/gordonglas/tellah-photo" target="_blank">Tellah</a></span>
+    </div>
+</div>
+<script>
+    resizeGridItems();
+</script>
+</body>
+</html>

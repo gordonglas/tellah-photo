@@ -1,0 +1,495 @@
+﻿@inherits RazorEngineCore.RazorEngineTemplateBase<TellahPhotoLibrary.Models.Html.HtmlAlbum>
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <title>@Model.AlbumName</title>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 1.0em;
+            background-color: #303030;
+            margin: 0 0;
+            /* prevent zoom in iOS, but still janky :( */
+            touch-action: pan-x pan-y;
+        }
+
+        .nav {
+            background-color: #375a7f;
+            color: #fff;
+            font-size: 1.4rem;
+            padding: 1.4rem 1.4rem;
+            margin-bottom: 30px;
+        }
+
+        #back-to-index-button {
+            float: left;
+            cursor: pointer;
+            width: 24px;
+            height: 33px;
+            background-image: url("../left-arrow-48px.png");
+            background-size: 26px;
+            background-repeat: no-repeat;
+            margin-right: 20px;
+        }
+
+        .page-margins {
+            margin: 0 0;
+            text-align:center;
+        }
+
+        /*@@media screen and (max-width: 403px) {
+            .page-margins {
+                margin: 0 0;
+            }
+        }*/
+
+        .footer {
+            margin: 20px auto 0 auto;
+            padding: 1.4rem 1.4rem;
+            background-color: #375a7f;
+            text-align: center;
+            color: #98a3ad;
+            font-size: 0.9rem;
+        }
+        .footer a {
+            color: #98a3ad;
+        }
+
+        .grid a {
+            color: #98a3ad;
+            text-decoration: none;
+        }
+
+        .grid-item {
+            display: inline-block;
+            width: 23%;
+            height: 300px;
+            margin: 0 0;
+            position: relative;
+            /*transition: all .2s ease-in-out;*/
+        }
+        /*.grid-item:hover {
+            transform: scale(1.15);
+        }*/
+        .grid-item img {
+            height: 100%;
+            /*border-radius: 8px;*/
+        }
+
+        .item-preview {
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .album-title {
+            padding-top: 10px;
+        }
+
+        #pop {
+            position: absolute;
+            background-color: black;
+        }
+
+        #popItem {
+            z-index:1000;
+        }
+
+        #prevImgItem {
+            position: absolute;
+            z-index: 1010;
+            background-color: transparent;
+            /* TODO: make smaller for mobile (with additional media query) */
+            width: 150px;
+            text-align:center;
+        }
+        #prevImgItem:hover {
+            /*border: 1px solid white;*/
+            cursor: pointer;
+        }
+
+        #prevVidItem {
+            position: absolute;
+            /*z-index: 1010;*/
+            background-color: transparent;
+            /* TODO: make smaller for mobile (with additional media query) */
+            width: 150px;
+            text-align: center;
+        }
+
+        #prevIcon {
+            position: absolute;
+            z-index: 1010;
+            /*margin-left: auto;
+            margin-right: auto;*/
+            /*top: 50%;
+            left: 50%;
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);*/
+            width: 43px;
+            height: 43px;
+            background-image: url("../left-arrow-48px.png");
+            background-size: 37px;
+            background-repeat: no-repeat;
+            background-color: rgba(160, 160, 160, 0.4);
+            background-position: 0.2em 0.2em;
+            border-radius: 20px;
+        }
+
+        #nextImgItem {
+            position: absolute;
+            z-index: 1010;
+            background-color: transparent;
+            /* TODO: make smaller for mobile (with additional media query) */
+            width: 150px;
+            text-align:center;
+        }
+        #nextImgItem:hover {
+            /*border: 1px solid white;*/
+            cursor: pointer;
+        }
+
+        #nextVidItem {
+            position: absolute;
+            /*z-index: 1010;*/
+            background-color: transparent;
+            /* TODO: make smaller for mobile (with additional media query) */
+            width: 150px;
+            text-align: center;
+        }
+
+        #nextIcon {
+            position: absolute;
+            z-index: 1010;
+            /*margin-left: auto;
+            margin-right: auto;*/
+            /*top: 50%;
+            left: 50%;
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);*/
+            width: 43px;
+            height: 43px;
+            background-image: url("../right-arrow-48px.png");
+            background-size: 37px;
+            background-repeat: no-repeat;
+            background-color: rgba(160, 160, 160, 0.4);
+            background-position: 0.2em 0.2em;
+            border-radius: 20px;
+        }
+
+        #closePop {
+            width: 54px;
+            height: 48px;
+            position: absolute;
+            z-index: 1020;
+            top: 5px;
+            right: 8px;
+            cursor: pointer;
+            background-image: url("../close-48px.png");
+            background-size: 42px;
+            background-repeat: no-repeat;
+            background-color: rgba(160, 160, 160, 0.4);
+            background-position: 0.35em 0.2em;
+            /*border-radius: 20px;*/
+        }
+
+        .video-icon {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            background: url("../play-btn.png") no-repeat;
+            background-position: 50% 50%;
+            background-size: 200%;
+            top: 0;
+            left: 0;
+            display: block;
+        }
+        @@media screen and (max-width: 480px) {
+          .video-icon {
+            background-size: 400%;
+          }
+        }
+    </style>
+
+    <script>
+        items = @Model.ItemsToJson();
+        idxShown = -1;
+
+        function getViewportSize() {
+            var e = window;
+            var a = "inner";
+            if (!("innerWidth" in window)) {
+                a = "client";
+                e = document.documentElement || document.body;
+            }
+            return { width: e[a + "Width"], height: e[a + "Height"] };
+        }
+
+        function scaleImage(width, height, maxWidth, maxHeight) {
+            var ratioX = maxWidth / width;
+            var ratioY = maxHeight / height;
+            var ratio = Math.min(ratioX, ratioY);
+
+            var newWidth = Math.floor(width * ratio);
+            var newHeight = Math.floor(height * ratio);
+
+            return { width: newWidth, height: newHeight };
+        }
+
+        function disableScrollbars() {
+            document.body.style.overflow = "hidden";
+        }
+
+        function enableScrollbars() {
+            document.body.style.overflow = "visible";
+        }
+
+        function resizeItem(idx) {
+            var item = items[idx];
+            var isImage = item.ty == 1;
+
+            var view = getViewportSize();
+            //console.log("view", view);
+            var imgSize = scaleImage(item.lgw, item.lgh, view.width, view.height);
+            //console.log("imgSize", imgSize);
+
+            // center image/video in viewport
+            var popItem = document.querySelector("#popItem");
+            popItem.style.width = imgSize.width + "px";
+            popItem.style.height = imgSize.height + "px";
+            popItem.style.position = "relative";
+            popItem.style.top = Math.floor((view.height - imgSize.height) / 2) + "px";
+            popItem.style.left = Math.floor((view.width - imgSize.width) / 2) + "px";
+            // cover viewport
+            pop.style.width = view.width + "px";
+            pop.style.height = view.height + "px";
+
+            // keep on screen if scrolled
+            var clientRect = document.querySelector("html").getBoundingClientRect();
+            //console.log("clientRect", clientRect);
+            pop.style.top = Math.abs(clientRect.top) + "px";
+            pop.style.left = Math.abs(clientRect.x) + "px";
+
+            var topIconBarHeight = 70;
+            var nextPrevBorder = 2;
+            var raiseIcon = 80;
+            var nextPrevItemHeight = view.height - 1 - topIconBarHeight - nextPrevBorder;
+
+            // setup prev/next buttons on left and right (on top of the image)
+            if (isImage) {
+                // images have larger clickable area than videos
+                var prevImgItem = document.querySelector("#prevImgItem");
+                var nextImgItem = document.querySelector("#nextImgItem");
+
+                prevImgItem.style.top = topIconBarHeight + "px";
+                prevImgItem.style.left = "0px";
+                prevImgItem.style.height = nextPrevItemHeight + "px";
+
+                nextImgItem.style.top = topIconBarHeight + "px";
+                nextImgItem.style.left = (Math.abs(clientRect.right) - 1 - 150 - nextPrevBorder) + "px";
+                nextImgItem.style.height = nextPrevItemHeight + "px";
+            }
+            else { // video
+                var prevVidItem = document.querySelector("#prevVidItem");
+                var nextVidItem = document.querySelector("#nextVidItem");
+
+                prevVidItem.style.top = topIconBarHeight + "px";
+                prevVidItem.style.left = "0px";
+                prevVidItem.style.height = (view.height - 1 - topIconBarHeight - nextPrevBorder) + "px";
+
+                nextVidItem.style.top = topIconBarHeight + "px";
+                nextVidItem.style.left = (Math.abs(clientRect.right) - 1 - 150 - nextPrevBorder) + "px";
+                nextVidItem.style.height = nextPrevItemHeight + "px";
+            }
+
+            // we want same top of next/prev icons across all videos/images
+
+            var prevIcon = document.querySelector("#prevIcon");
+            prevIcon.style.top = (Math.floor(nextPrevItemHeight / 2) - raiseIcon) + "px";
+            // TODO: make smaller for tiny widths
+            prevIcon.style.left = "50px";
+
+            var nextIcon = document.querySelector("#nextIcon");
+            nextIcon.style.top = (Math.floor(nextPrevItemHeight / 2) - raiseIcon) + "px";
+            // TODO: make smaller for tiny widths
+            nextIcon.style.left = "60px";
+        }
+
+        function displayItem(idx) {
+            idxShown = idx;
+            var item = items[idx];
+            //console.log("item", idx, item);
+
+            var pop = document.querySelector("#pop");
+
+            var main = document.querySelector("#popMain");
+            main.innerHTML = "";
+
+            disableScrollbars();
+
+            var h;
+            var isImage = item.ty == 1;
+            // TODO: maybe need to html-escape other characters?
+            //       or maybe just use javascript to set src field after html is rendered?
+            var largeFileName = item.lgf.replace("\'", "&#39;");
+
+            if (isImage) { // image
+                h = "<img id='popItem' src='" + largeFileName + "' />";
+            }
+            else { // video
+                h = "<video id='popItem' controls autoplay playsinline>" +
+                    "<source src='" + largeFileName + "' type='video/mp4'>" +
+                    "Sorry, your browser doesn't support embedded videos." +
+                    "</video>";
+            }
+
+            var prevIdx = idx - 1 < 0 ? items.length - 1 : idx - 1;
+            var nextIdx = idx + 1 >= items.length ? 0 : idx + 1;
+
+            if (isImage) {
+                // images have larger clickable area
+                h += "<div id='prevImgItem' onclick='displayItem(" + prevIdx + ");'>";
+                h += "<div id='prevIcon'></div>";
+                h += "</div>";
+
+                h += "<div id='nextImgItem' onclick='displayItem(" + nextIdx + ");'>";
+                h += "<div id='nextIcon'></div>";
+                h += "</div>";
+            }
+            else {
+                // video has smaller clickable area, so we don't cover the video controls
+                h += "<div id='prevVidItem'>";
+                h += "<div id='prevIcon' onclick='displayItem(" + prevIdx + ");'></div>";
+                h += "</div>";
+
+                h += "<div id='nextVidItem'>";
+                h += "<div id='nextIcon' onclick='displayItem(" + nextIdx + ");'></div>";
+                h += "</div>";
+            }
+
+            h += "<div id='closePop' onclick='closePop();'></div>";
+
+            main.innerHTML = h;
+            // show image on top of album thumbnails, so it can be
+            // closed and user can resume where they left off.
+            pop.style.display = "block";
+            pop.style.zIndex = 1000;
+
+            // prevent selecting page elements on double-click of the prev and next clicks.
+            if (isImage) {
+                var prevImgItem = document.querySelector("#prevImgItem");
+                var nextImgItem = document.querySelector("#nextImgItem");
+                prevImgItem.addEventListener("mousedown", function (e) { e.preventDefault(); }, false);
+                nextImgItem.addEventListener("mousedown", function (e) { e.preventDefault(); }, false);
+            }
+            else {
+                var prevVidItem = document.querySelector("#prevVidItem");
+                var nextVidItem = document.querySelector("#nextVidItem");
+                prevVidItem.addEventListener("mousedown", function (e) { e.preventDefault(); }, false);
+                nextVidItem.addEventListener("mousedown", function (e) { e.preventDefault(); }, false);
+            }
+
+            // on-hover
+            var prevIcon = document.querySelector("#prevIcon");
+            var nextIcon = document.querySelector("#nextIcon");
+            prevIcon.addEventListener("mouseover", function (e) {
+                this.style.cursor = "pointer";
+            }, false);
+            nextIcon.addEventListener("mouseover", function (e) {
+                this.style.cursor = "pointer";
+            }, false);
+
+            resizeItem(idx);
+        }
+
+        function closePop() {
+            var main = document.querySelector("#popMain");
+            main.innerHTML = "";
+            idxShown = -1;
+            var pop = document.querySelector("#pop");
+            pop.style.zIndex = -1000;
+            pop.style.display = "none";
+            pop.style.left = "0px";
+            pop.style.top = "0px";
+            enableScrollbars();
+        }
+
+        function resizeGridItems() {
+            // This is a potentially costly operation.
+            // Need pixel heights instead of percentages,
+            // else images won't line up properly.
+            var heightPercent = 0.15;
+            var minHeight = 50;
+            var width;
+            var gridItems = document.querySelectorAll(".grid-item");
+            for (var i = 0; i < gridItems.length; i++) {
+                var item = gridItems[i];
+                width = item.clientWidth;
+                item.style.height = (Math.round(width * heightPercent) > minHeight ?
+                    width - Math.round(width * heightPercent) : width) + "px";
+            }
+        }
+
+        var resizeTimeout;
+        window.addEventListener("resize", function () {
+            clearTimeout(resizeTimeout);
+
+            if (idxShown != -1) {
+                resizeItem(idxShown);
+            }
+
+            // mitigate processor intensive stuff by doing it on "final" resize. (debounce pattern)
+            resizeTimeout = setTimeout(function () {
+                resizeGridItems();
+
+                if (idxShown != -1) {
+                    resizeItem(idxShown);
+                }
+            }, 100);
+        });
+    </script>
+</head>
+<body>
+<div>
+    <div id="pop" style="display:none">
+        <div id="popMain"></div>
+    </div>
+
+    <div class="nav">
+        <a href="@Model.AlbumIndexUrl"><div id="back-to-index-button" title="Back to album index"></div></a>
+        <div class="album-index-title">@Model.AlbumName</div>
+    </div>
+
+    <div class="page-margins">
+        <div class="grid">
+            @{
+                int idx = 0;
+            }
+            @foreach (var item in Model.Items)
+            {
+                <a href="@item.LargeFileName" onclick="displayItem(@idx); return false;">
+                    <div class="grid-item">
+                        @if (item.ItemType.ToString() == "Video")
+                        {
+                            <span class="video-icon"></span>
+                        }
+                        <img class="item-preview" src="@item.PreviewFileName" />
+                    </div>
+                </a>
+                idx++;
+            }
+        </div>
+    </div>
+
+    <div class="footer">
+        <span>Made with ❤️ in <a href="https://github.com/gordonglas/tellah-photo" target="_blank">Tellah</a></span>
+    </div>
+</div>
+<script>
+    resizeGridItems();
+</script>
+</body>
+</html>
