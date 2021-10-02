@@ -156,7 +156,7 @@ namespace TellahPhotoLibrary.Video
             // TODO: test quotes around file on linux and mac
             args.Append($"-i \"{inputFile}\" -vcodec h264 -b:v {newBitrate:0.00}M ");
             // if no audio, add ffmpeg "-an" switch.
-            // TODO: test with grandpa's old videos that don't have any sound supposedly. Else might need to pass this in for certain files. hmmm.
+            // TODO: test with videos that don't have any sound, else might need to pass this in for certain files
             if (fileInfo.HasAudio)
             {
                 args.Append("-acodec aac -b:a 92k ");
@@ -332,7 +332,7 @@ namespace TellahPhotoLibrary.Video
             CreateVideoThumbnailResponse response = new CreateVideoThumbnailResponse();
             response.ThumbnailFileName = Path.GetFileName(outputFile);
             // TODO: hopefully exiftool gets ImageWidth and ImageHeight reliably,
-            //       else call ffprobe here.
+            //       else call ffprobe here. Seems ok for now though.
             response.ThumbnailFileSize = newSize ??
                 new Size(fileInfo.ImageWidth.Value, fileInfo.ImageHeight.Value);
 

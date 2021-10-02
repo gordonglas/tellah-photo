@@ -14,12 +14,25 @@ namespace TellahPhotoConsole
 
             TellahPhotoApi photoApi = new TellahPhotoApi(logger);
 
+            if (args.Length == 0)
+            {
+                logger.WriteLine("tellah v" + photoApi.GetVersion() + Environment.NewLine +
+                    photoApi.GetUsage());
+                return;
+            }
+
             List<Task> tasks = new List<Task>();
 
             try
             {
                 CommandLine commandLine = new CommandLine();
                 commandLine.Parse(args);
+
+                if (commandLine.HasFlag("v"))
+                {
+                    logger.WriteLine("tellah v" + photoApi.GetVersion());
+                    return;
+                }
 
                 if (commandLine.HasValue("album-cover"))
                 {

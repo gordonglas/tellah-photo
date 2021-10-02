@@ -3,7 +3,10 @@
 ![Tellah](https://raw.githubusercontent.com/gordonglas/tellah-photo/main/tellah.webp)
 
 Simple tool for creating smaller versions of photos and videos and use them to generate an HTML album, that can be used for self-hosting.
+
 TellahPhoto has only been tested on Windows, but shouldn't take too much work to get working on other platforms. The generated html albums themselves can be hosted anywhere, on any platform.
+
+[Demo album](https://gglas.ninja/photos/public/album-index.html)
 
 * To run the command line app, `tellah`, you'll need to:
     * Install the `.NET Core 5 runtime`.
@@ -52,7 +55,7 @@ tellah -build-html "c:\photos\generated-albums\public" -album-index-url-path "/p
 ```
 
 ## Command-line reference
-* TODO: finish, and sync with C# usage string.
+* Run `tellah` without any command line switches to display usage info.
 
 ## What does it NOT do?
 * Modify your raw (input) files.
@@ -71,9 +74,8 @@ If you want to build it, just clone the repo, open the .sln file in Visual Studi
 
 Sure! Just keep in mind, I have a day-job and several other personal projects I'm currently working on, so it might take some time for me to respond/include your changes. I created this project on my own time, mainly because I want to de-Google myself that much more, and don't want to pay Google to host my photos/videos.
 
-## TODO:
-* Add command-line info, along with example usage.
-* Slideshow button.
-* Maybe test/fix problems on platforms other than Windows. (double-quotes, slashes, etc)
+## TODO (maybe):
+* A slideshow button.
+* Test/fix problems on platforms other than Windows. (double-quotes, slashes, etc)
 * Use AV1 (patent/royalty-free) video format when it has more browser support: https://caniuse.com/av1
-* Maybe a lightweight cross-platform UI at some point.
+* A lightweight cross-platform UI at some point.

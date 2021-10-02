@@ -26,11 +26,113 @@ namespace TellahPhotoLibrary
             _videoApi = new FfmpegVideoApi(_logger, _fileInfoApi);
         }
 
+        public string GetVersion()
+        {
+            return GetType().Assembly.GetName().Version.ToString();
+        }
+
         public string GetUsage()
         {
-            // TODO: finish
-            string usage = @"Usage:
-    tellah -i {input-folder} -o {output-folder} -image-size 1920x1920 -video-size 960x960 -preview-image-size 420x420 -video-preview-time-offset-seconds 0.5";
+            string usage = @"A simple tool for creating smaller versions of
+photos and videos and use them to generate an HTML
+album, that can be used for self-hosting.
+
+More info and latest version can be found at:
+https://github.com/gordonglas/tellah-photo
+
+Usage:
+
+  Version:
+    tellah --v
+
+  Process album:
+    Converts photos/videos to smaller format,
+    and generates .tellah.json metadata file.
+
+    Required switches:
+      -i {input-folder}
+        input-folder is folder of raw photos/videos.
+
+      -o {output-folder}
+        output-folder is where album is generated.
+
+      -album-name {album-name}
+        album-name is the albums display name.
+
+    Optional switches:
+       -image-size {width}x{height}
+         default: 1920x1920
+
+       -video-size {width}x{height}
+         default: Size of input video file.
+
+       -preview-image-size {width}x{height}
+         default: 640x640
+
+       -video-preview-time-offset-seconds {seconds}
+         seconds is a float of time from start of
+         video where preview image is generated.
+         default: 0.5
+
+       -jpeg-quality {jpeg-quality}
+         jpeg-quality is an int percent of
+         jpg image quality.
+         default: 70
+
+    Example:
+      tellah -i ""c:\photos\raw\public\art""
+        -o ""c:\photos\generated-albums\public\art""
+        -album-name ""Art""
+        -image-size 1920x1920 -video-size 960x960
+        -preview-image-size 420x420
+        -video-preview-time-offset-seconds 0.5
+
+
+  Update/sync album:
+    After an album has already been processed,
+    you can use this shorthand within the album folder:
+
+    tellah --update
+
+
+  Build html:
+    Builds album html from processed albums.
+
+    Required switches:
+      -build-html {album-index-folder}
+        album-index-folder is the parent folder
+        of one or more processed albums.
+
+      -album-index-url-path {album-index-url-path}
+        album-index-url-path is the url path
+        where your album's index page will be
+        on your web server.
+
+    Optional switches:
+      -sort-albums-by {sort-by-type}
+        sort-by-type can be one of the following values:
+          AlbumEndDateDesc
+          AlbumFolderNameAsc
+        default: AlbumEndDateDesc
+
+    Example:
+      tellah -build-html ""c:\photos\generated-albums\public""
+      -album-index-url-path ""/photos/public/""
+
+
+  Set album cover:
+    Change the album cover to an existing album image.
+    You must rebuild html again after running this
+    to see the change in your album index page.
+
+    Required switches:
+      -album-cover {album-cover-image}
+        album-cover-image is a path to an existing
+        image file to use as the album's cover image.
+
+    Example:
+      tellah -album-cover ""c:\photos\generated-albums\public\art\a-video_tm.jpg""";
+
             return usage;
         }
 
@@ -361,7 +463,6 @@ namespace TellahPhotoLibrary
             // -if video file
             //   -convert to mp4, (VideoSize, KeepAspectRatio)
             //     -if no audio, add ffmpeg "-an" switch
-            //     TODO: (test with old grandpa videos)
             //   -create thumbnail (PreviewImageSize, KeepAspectRatio, VideoPreviewTimeOffsetSeconds) (see "CreateSingleVideoThumbnail")
             //   -record json metadata in memory
 
@@ -574,15 +675,16 @@ namespace TellahPhotoLibrary
                 jsonAlbumItem.PreviewFileName = createVideoThumbnailResponse.ThumbnailFileName;
                 jsonAlbumItem.PreviewFileSize = createVideoThumbnailResponse.ThumbnailFileSize;
 
-                // TODO: for debugging... take this out
+#if DEBUG
                 if (fileInfo.MediaTakenSource == MediaTakenSourceField.FileModifyDate &&
                     fileInfo.IsModifiedAfterCreated())
                 {
                     _logger.WarnWriteLine($"No MediaCreated and modified after created: {inputFilePath}");
                 }
+#endif
 
                 if (/*options.KeepMetadata &&*/
-            fileInfo.MediaTakenSource != MediaTakenSourceField.None &&
+                    fileInfo.MediaTakenSource != MediaTakenSourceField.None &&
                     // prevent invalid modified date from becoming the "media created"
                     !(fileInfo.MediaTakenSource == MediaTakenSourceField.FileModifyDate && fileInfo.IsModifiedAfterCreated()))
                 {
