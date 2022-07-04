@@ -9,7 +9,7 @@ TellahPhoto has only been tested on Windows, but shouldn't take too much work to
 [Demo album](https://gglas.ninja/photos/public/album-index.html)
 
 * To run the command line app, `tellah`, you'll need to:
-    * Install the `.NET Core 5 runtime`.
+    * Install the `.NET Core 6 runtime`.
     * Download [exiftool.exe](https://exiftool.org), [ffmpeg.exe](https://www.ffmpeg.org) and [ffprobe.exe](https://www.ffmpeg.org), and put them in your environment path.
         * `ffprobe` comes with `ffmpeg`.
     * You can download pre-built `tellah` binaries in [Releases](https://github.com/gordonglas/tellah-photo/releases) or [build from source](#build-from-source).
@@ -68,7 +68,7 @@ tellah -build-html "c:\photos\generated-albums\public" -album-index-url-path "/p
 ## Build from source
 
 If you just need a pre-built binary, you can find it under [Releases](https://github.com/gordonglas/tellah-photo/releases).
-If you want to build it, just clone the repo, open the .sln file in Visual Studio 2019+ and build it. You'll need the .NET Core Visual Studio workload installed.
+If you want to build it, just clone the repo, open the .sln file in Visual Studio 2022+ and build it. You'll need the `.NET Desktop Development` Visual Studio workload installed.
 
 ## Do you accept pull requests?
 
