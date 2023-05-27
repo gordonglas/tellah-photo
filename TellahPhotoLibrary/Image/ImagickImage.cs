@@ -98,7 +98,7 @@ namespace TellahPhotoLibrary.Image
             _logger = logger;
             _sourcePathAndFile = sourcePathAndFile;
             _sourceFileInfo = sourceFileInfo;
-            _fileNameWithoutExtension = Path.GetFileNameWithoutExtension(sourcePathAndFile);
+            _fileNameWithoutExtension = PathUtils.CalculateFileNameWithoutExtension(sourcePathAndFile);
             _destinationPath = destinationPath ?? Path.GetDirectoryName(sourcePathAndFile);
 
             if (options != null)

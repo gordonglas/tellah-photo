@@ -82,14 +82,14 @@ namespace TellahPhotoLibrary.Video
             if (options.VideoOutputPath == null)
             {
                 outputFile = Path.Combine(Directory.GetCurrentDirectory(),
-                    Path.GetFileNameWithoutExtension(inputFile) + ".mp4");
+                    PathUtils.CalculateFileNameWithoutExtension(inputFile) + ".mp4");
             }
             else
             {
                 if (PathUtils.IsDirectory(options.VideoOutputPath))
                 {
                     outputFile = Path.Combine(Path.GetFullPath(options.VideoOutputPath),
-                        Path.GetFileNameWithoutExtension(inputFile) + ".mp4");
+                        PathUtils.CalculateFileNameWithoutExtension(inputFile) + ".mp4");
                 }
                 else
                 {
@@ -230,14 +230,14 @@ namespace TellahPhotoLibrary.Video
             if (options.ThumbnailOutputPath == null)
             {
                 outputFile = Path.Combine(Directory.GetCurrentDirectory(),
-                    Path.GetFileNameWithoutExtension(inputFile) + "_tm.jpg");
+                    PathUtils.CalculateFileNameWithoutExtension(inputFile) + "_tm.jpg");
             }
             else
             {
                 if (PathUtils.IsDirectory(options.ThumbnailOutputPath))
                 {
                     outputFile = Path.Combine(Path.GetFullPath(options.ThumbnailOutputPath),
-                        Path.GetFileNameWithoutExtension(inputFile) + "_tm.jpg");
+                        PathUtils.CalculateFileNameWithoutExtension(inputFile) + "_tm.jpg");
                 }
                 else
                 {

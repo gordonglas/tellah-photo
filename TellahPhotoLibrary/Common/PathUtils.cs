@@ -89,6 +89,23 @@ namespace TellahPhotoLibrary.Common
             return relativePath;
         }
 
+        // Handles case when there are multiple files in the same album with the same base name but different extensions.
+        // For example: "IMG_0959.jpg" and "IMG_0959.mov". "IMG_0959.mov" will become "IMG_0959_mov.mp4" in this case.
+        public static string CalculateFileNameWithoutExtension(string filePath)
+        {
+            string ext = Path.GetExtension(filePath) ?? "";
+            if (ext.Length > 1)
+            {
+                ext = "_" + ext.Substring(1, ext.Length - 1);
+            }
+            else
+            {
+                ext = "";
+            }
+
+            return $"{Path.GetFileNameWithoutExtension(filePath)}{ext}";
+        }
+
         private static string RemoveTrailingDirectorySeparatorChar(string relativePath)
         {
             if (relativePath.EndsWith(Path.DirectorySeparatorChar.ToString()))
