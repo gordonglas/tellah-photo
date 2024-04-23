@@ -476,7 +476,7 @@ namespace TellahPhotoLibrary.Image
                     image.Flop();
                     image.Rotate(90);
                     break;
-                case OrientationType.LeftBotom:
+                case OrientationType.LeftBottom:
                     image.Rotate(-90);
                     break;
                 default:
@@ -489,7 +489,7 @@ namespace TellahPhotoLibrary.Image
         {
             switch (format)
             {
-                case MagickFormat.Gif:      // possibly and animated gif (GIF89)
+                case MagickFormat.Gif:      // possibly an animated gif (GIF89)
                 case MagickFormat.Gif87:    // not animated gif, single image
                     return "gif";
                 case MagickFormat.Jpeg:
