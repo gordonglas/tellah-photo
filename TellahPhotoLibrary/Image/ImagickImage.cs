@@ -119,10 +119,10 @@ namespace TellahPhotoLibrary.Image
             // ffmpeg.exe is in the bin folder or path env var.
             MagickImageInfo info = new MagickImageInfo(_sourcePathAndFile);
 
-            OriginalImageInfo.Width = info.Width;
-            OriginalImageInfo.Height = info.Height;
+            OriginalImageInfo.Width = (int)info.Width;
+            OriginalImageInfo.Height = (int)info.Height;
             OriginalImageInfo.Format = info.Format;
-            OriginalImageInfo.Quality = info.Quality;
+            OriginalImageInfo.Quality = (int)info.Quality;
             OriginalImageInfo.ByteLen = _sourceFileInfo.FileSizeBytes; //new System.IO.FileInfo(_sourcePathAndFile).Length;
             OriginalImageInfo.DestinationPathAndFile = _sourcePathAndFile;
 
@@ -264,13 +264,13 @@ namespace TellahPhotoLibrary.Image
             // imagick isn't aware about rotation exif data?
             if (_sourceFileInfo.IsRotated)
             {
-                CurrentImageInfo.Width = Images[0].Height;
-                CurrentImageInfo.Height = Images[0].Width;
+                CurrentImageInfo.Width = (int)Images[0].Height;
+                CurrentImageInfo.Height = (int)Images[0].Width;
             }
             else
             {
-                CurrentImageInfo.Width = Images[0].Width;
-                CurrentImageInfo.Height = Images[0].Height;
+                CurrentImageInfo.Width = (int)Images[0].Width;
+                CurrentImageInfo.Height = (int)Images[0].Height;
             }
             CurrentImageInfo.DestinationPathAndFile = null;
 
@@ -302,7 +302,8 @@ namespace TellahPhotoLibrary.Image
                     Images[0].Format != MagickFormat.Jpg)
                 {
                     CurrentImageInfo.Format = Images[0].Format = MagickFormat.Jpg;
-                    CurrentImageInfo.Quality = Images[0].Quality = Options.JpegQuality;
+                    Images[0].Quality = (uint)Options.JpegQuality;
+                    CurrentImageInfo.Quality = Options.JpegQuality;
                 }
             }
 
@@ -334,7 +335,8 @@ namespace TellahPhotoLibrary.Image
             if ((Images[0].Format == MagickFormat.Jpeg || Images[0].Format == MagickFormat.Jpg)
                 && Images[0].Quality > Options.JpegQuality)
             {
-                CurrentImageInfo.Quality = Images[0].Quality = Options.JpegQuality;
+                Images[0].Quality = (uint)Options.JpegQuality;
+                CurrentImageInfo.Quality = Options.JpegQuality;
             }
 
             // if image is rotated, rotate it to "normal" orientation.
@@ -352,7 +354,7 @@ namespace TellahPhotoLibrary.Image
             {
                 // https://github.com/dlemstra/Magick.NET/blob/master/docs/ResizeImage.md
 
-                MagickGeometry geometry = new MagickGeometry(Options.LgWidth, Options.LgHeight);
+                MagickGeometry geometry = new MagickGeometry((uint)Options.LgWidth, (uint)Options.LgHeight);
                 geometry.IgnoreAspectRatio = false;
 
                 foreach (var image in Images)
@@ -360,8 +362,8 @@ namespace TellahPhotoLibrary.Image
                     image.Resize(geometry);
                 }
 
-                CurrentImageInfo.Width = Images[0].Width;
-                CurrentImageInfo.Height = Images[0].Height;
+                CurrentImageInfo.Width = (int)Images[0].Width;
+                CurrentImageInfo.Height = (int)Images[0].Height;
 
                 CurrentImageInfo.DestinationPathAndFile = Path.Combine(_destinationPath,
                     $"{_fileNameWithoutExtension}_{ImagickImageInfo.GetSizeTypeAbbeviation(ImageSizeType.Large)}.{GetFileExtensionFromFormat(Images[0].Format)}");
@@ -395,7 +397,8 @@ namespace TellahPhotoLibrary.Image
                 // use jpg for the thumbnail for animated gifs, so we keep the
                 // preview image small.
                 CurrentImageInfo.Format = Images[0].Format = MagickFormat.Jpg;
-                CurrentImageInfo.Quality = Images[0].Quality = Options.JpegQuality;
+                Images[0].Quality = (uint)Options.JpegQuality;
+                CurrentImageInfo.Quality = Options.JpegQuality;
 
                 // only need the first image in the gif.
                 for (int i = Images.Count - 1; i > 0; i--)
@@ -409,7 +412,7 @@ namespace TellahPhotoLibrary.Image
             {
                 // https://github.com/dlemstra/Magick.NET/blob/master/docs/ResizeImage.md
 
-                MagickGeometry geometry = new MagickGeometry(Options.SmWidth, Options.SmHeight);
+                MagickGeometry geometry = new MagickGeometry((uint)Options.SmWidth, (uint)Options.SmHeight);
                 geometry.IgnoreAspectRatio = false;
 
                 foreach (var image in Images)
@@ -417,8 +420,8 @@ namespace TellahPhotoLibrary.Image
                     image.Resize(geometry);
                 }
 
-                CurrentImageInfo.Width = Images[0].Width;
-                CurrentImageInfo.Height = Images[0].Height;
+                CurrentImageInfo.Width = (int)Images[0].Width;
+                CurrentImageInfo.Height = (int)Images[0].Height;
 
                 CurrentImageInfo.DestinationPathAndFile = Path.Combine(_destinationPath,
                     $"{_fileNameWithoutExtension}_{ImagickImageInfo.GetSizeTypeAbbeviation(ImageSizeType.Small)}.{GetFileExtensionFromFormat(Images[0].Format)}");

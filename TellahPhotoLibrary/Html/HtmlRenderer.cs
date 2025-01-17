@@ -11,6 +11,10 @@ namespace TellahPhotoLibrary.Html
 
         /// <summary>
         /// Renders html from a razor cshtml template file and model.
+        /// While TellahPhoto itself requires a minimum runtime version of .NET,
+        /// the RazorEngineCore nuget package restricts the version of .NET that can
+        /// be used in the template code. See RazorEngineCore to see what version of
+        /// .NET is supported in templates.
         /// </summary>
         /// <param name="templateName">Razor cshtml template file. See cshtml files under TellahPhotoConsole/RazorTemplates/</param>
         /// <param name="model">Model that the cshtml file will use to render html</param>
